@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Admin Dashboard - The Bookroom</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f8fc;
+            color: #222;
+        }
+
+        .navbar {
+            background: white;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3157e8;
+        }
+
+        .admin {
+            font-weight: 600;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #3157e8, #7048e8);
+            color: white;
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .status {
+            background: #fff4d6;
+            color: #a56a00;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .returned {
+            background: #e7f8ed;
+            color: #168344;
+        }
+        .delete-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #fff0f0;
+    color: #e5484d;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #e5484d;
+    color: white;
+}
+.edit-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #eef1ff;
+    color: #3157e8;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.edit-btn:hover {
+    background: #3157e8;
+    color: white;
+}
+
+.edit-form {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    width: 90%;
+    max-width: 650px;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    z-index: 100;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.edit-form h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.edit-form form {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.edit-form input {
+    flex: 1;
+    min-width: 180px;
+    padding: 12px;
+    border: 1px solid #e1e5ef;
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+}
+
+.save-btn {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #3157e8;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #2446c7;
+}
+.logout-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #fff0f0;
+    color: #e5484d;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #e5484d;
+    color: white;
+}
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            The Bookroom
+        </div>
+
+        <div class="admin">
+
+    👑 Admin
+
+    <form method="POST" style="display:inline; margin-left:15px;">
+        {% csrf_token %}
+
+        <input type="hidden" name="action" value="admin_logout">
+
+        <button type="submit" class="logout-btn">
+            Logout
+        </button>
+    </form>
+
+</div>
+
+    </nav>
+
+
+    <main class="container">
+
+        <div class="hero">
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                View and manage library records.
+            </p>
+
+        </div>
+
+
+        <section class="section">
+
+            <h2>📚 Library Books</h2>
+
+            <table>
+
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Available</th>
+                </tr>
+
+                {% for book in books %}
+
+                <tr>
+
+    <td>{{ book.title }}</td>
+
+    <td>{{ book.author }}</td>
+
+    <td>{{ book.category }}</td>
+
+    <td>{{ book.quantity }}</td>
+
+    <td>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="admin_delete">
+            <input type="hidden" name="book_id" value="{{ book.id }}">
+
+            <button type="submit" class="delete-btn">
+                Delete
+            </button>
+        </form>
+        <button
+    type="button"
+    class="edit-btn"
+    onclick="editBook(
+        '{{ book.id }}',
+        '{{ book.title }}',
+        '{{ book.author }}',
+        '{{ book.category }}',
+        '{{ book.quantity }}'
+    )">
+    Edit
+</button>
+    </td>
+
+</tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="4" style="text-align:center;">
+                        No books available.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </section>
+
+
+        <section class="section">
+
+            <h2>📋 Borrowing Records</h2>
+
+            <table>
+
+                <tr>
+                    <th>Username</th>
+                    <th>Book</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+                {% for borrow in borrowed_books %}
+
+                <tr>
+
+                    <td>{{ borrow.username }}</td>
+
+                    <td>{{ borrow.book.title }}</td>
+
+                    <td>{{ borrow.borrow_date }}</td>
+
+                    <td>
+                        {{ borrow.return_date|default:"Not returned" }}
+                    </td>
+
+                    <td>
+
+                        {% if borrow.return_date %}
+
+                            <span class="status returned">
+                                Returned
+                            </span>
+
+                        {% else %}
+
+                            <span class="status">
+                                Borrowed
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+<td>
+
+    {% if not borrow.return_date %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <input type="hidden" name="action" value="admin_return">
+            <input type="hidden" name="borrow_id" value="{{ borrow.id }}">
+
+            <button type="submit" class="return-btn">
+                Return
+            </button>
+        </form>
+
+    {% else %}
+
+        —
+
+    {% endif %}
+
+</td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="6" style="text-align:center;">
+                        No borrowing records yet.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </section>
+
+    </main>
+<div id="editForm" class="edit-form" style="display: none;">
+
+    <h2>Edit Book</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <input type="hidden" name="action" value="admin_edit">
+        <input type="hidden" name="book_id" id="editBookId">
+
+        <input type="text" name="title" id="editTitle" placeholder="Book title" required>
+
+        <input type="text" name="author" id="editAuthor" placeholder="Author" required>
+
+        <input type="text" name="category" id="editCategory" placeholder="Category" required>
+
+        <input type="number" name="quantity" id="editQuantity" placeholder="Quantity" required>
+
+        <button type="submit" class="save-btn">
+            Save Changes
+        </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+function editBook(id, title, author, category, quantity) {
+
+    document.getElementById("editForm").style.display = "block";
+
+    document.getElementById("editBookId").value = id;
+    document.getElementById("editTitle").value = title;
+    document.getElementById("editAuthor").value = author;
+    document.getElementById("editCategory").value = category;
+    document.getElementById("editQuantity").value = quantity;
+
+}
+
+</script>
+</body>
+</html>
